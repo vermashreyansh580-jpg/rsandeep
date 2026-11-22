@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Images, ArrowRight, Sparkles, Shirt, Heart, Calendar } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { subscribeToCategories } from '@/lib/catalogService';
 
 export interface CategoryItem {
   id: string;
@@ -13,7 +14,7 @@ export interface CategoryItem {
   badge?: string;
 }
 
-const defaultCategories: CategoryItem[] = [
+export const defaultCategories: CategoryItem[] = [
   {
     id: 'WEDDINGS',
     title: 'Weddings & Mandapam',
@@ -73,32 +74,12 @@ interface CategoryGatewayProps {
 export default function CategoryGateway({ onOpenCategory }: CategoryGatewayProps) {
   const [categories, setCategories] = useState<CategoryItem[]>(defaultCategories);
 
-  // Load dynamic categories created from rsandeep-admin panel
+  // Subscribe to Cloud Firestore & local sync
   useEffect(() => {
-    const saved = localStorage.getItem('rsandeep_categories');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setCategories(parsed);
-        }
-      } catch (e) {}
-    }
-
-    // Cross-tab real-time sync with admin panel
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'rsandeep_categories' && e.newValue) {
-        try {
-          const parsed = JSON.parse(e.newValue);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setCategories(parsed);
-          }
-        } catch (err) {}
-      }
+    const unsubscribe = subscribeToCategories(defaultCategories, setCategories);
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
     };
-
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   return (

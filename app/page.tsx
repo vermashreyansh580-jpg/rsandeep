@@ -14,6 +14,7 @@ import BookingForm from '@/components/BookingForm';
 import Footer from '@/components/Footer';
 import MasonryModal, { PortfolioItem } from '@/components/MasonryModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
+import { subscribeToPhotos } from '@/lib/catalogService';
 
 const initialPortfolio: PortfolioItem[] = [
   // WEDDINGS & BRIDAL
@@ -54,32 +55,12 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Load from LocalStorage (synced with rsandeep-admin)
+  // Subscribe to Cloud Firestore & real-time sync
   useEffect(() => {
-    const saved = localStorage.getItem('rsandeep_portfolio');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setPortfolioItems(parsed);
-        }
-      } catch (e) {}
-    }
-
-    // Real-time cross-tab sync when admin panel updates photos
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'rsandeep_portfolio' && e.newValue) {
-        try {
-          const parsed = JSON.parse(e.newValue);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setPortfolioItems(parsed);
-          }
-        } catch (err) {}
-      }
+    const unsubscribe = subscribeToPhotos(initialPortfolio, setPortfolioItems);
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
     };
-
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   const openMasonry = (cat: string = 'ALL') => {
@@ -110,7 +91,7 @@ export default function Home() {
       {/* 3. Social Proof & Trust Metrics Bar */}
       <TrustBar />
 
-      {/* 4. Category Gateway Hub (Dynamic Cards from Admin Sync that open Masonry Gallery) */}
+      {/* 4. Category Gateway Hub (Dynamic Cards from Cloud Firestore) */}
       <CategoryGateway onOpenCategory={openMasonry} />
 
       {/* 5. Cinema Theater & YouTube Highlights Showcase */}
