@@ -5,22 +5,9 @@ import { Phone, Instagram, Youtube, Images, MessageCircle, Crown } from 'lucide-
 
 interface NavbarProps {
   onOpenGallery: (cat?: string) => void;
-  onOpenAdmin: () => void;
 }
 
-export default function Navbar({ onOpenGallery, onOpenAdmin }: NavbarProps) {
-  const [clickCount, setClickCount] = React.useState(0);
-
-  const handleLogoClick = () => {
-    const next = clickCount + 1;
-    if (next >= 5) {
-      setClickCount(0);
-      onOpenAdmin();
-    } else {
-      setClickCount(next);
-    }
-  };
-
+export default function Navbar({ onOpenGallery }: NavbarProps) {
   return (
     <>
       {/* Top Announcement Bar */}
@@ -57,30 +44,29 @@ export default function Navbar({ onOpenGallery, onOpenAdmin }: NavbarProps) {
         </div>
       </div>
 
-      {/* Main Sticky Navbar */}
-      <header className="sticky top-0 z-40 bg-brand-charcoal/90 backdrop-blur-xl border-b border-brand-borderDark">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+      {/* Main Luxury Navigation Bar */}
+      <header className="sticky top-0 z-40 bg-brand-charcoal/90 backdrop-blur-md border-b border-brand-borderDark/60 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
           
-          {/* Logo with 5-Click Secret Admin Trigger */}
-          <div
-            onClick={handleLogoClick}
-            className="flex items-center gap-3 cursor-pointer select-none"
-            title="R Sandeep Photography (Click 5 times for Admin)"
+          {/* Logo & Brand Identity */}
+          <a
+            href="#home"
+            className="flex items-center gap-3 group text-left"
           >
-            <div className="w-11 h-11 rounded-full border border-brand-gold flex items-center justify-center bg-brand-darkCard text-brand-gold font-cinzel font-bold text-lg shadow-lg">
+            <div className="w-11 h-11 rounded-full border border-brand-gold/60 flex items-center justify-center bg-brand-darkCard text-brand-gold font-cinzel font-bold text-lg shadow-lg group-hover:border-brand-gold transition-colors">
               RS
             </div>
             <div>
-              <span className="font-cinzel text-lg sm:text-xl font-bold tracking-[0.2em] text-white block leading-none">
+              <span className="font-cinzel text-xl tracking-[0.2em] font-bold text-white block group-hover:text-brand-gold transition-colors">
                 R SANDEEP
               </span>
-              <span className="font-cinzel text-[9px] tracking-[0.35em] text-brand-gold uppercase block mt-1 font-medium">
+              <span className="font-cinzel text-[9px] tracking-[0.35em] text-brand-gold uppercase block">
                 PHOTOGRAPHY & CINEMA
               </span>
             </div>
-          </div>
+          </a>
 
-          {/* Desktop Navigation */}
+          {/* Nav Links */}
           <nav className="hidden lg:flex items-center gap-8 text-xs font-cinzel tracking-[0.2em] uppercase font-medium text-brand-ivory/80">
             <a href="#home" className="hover:text-brand-gold transition-colors">Home</a>
             <a href="#gallery" className="hover:text-brand-gold transition-colors">Portfolios</a>
@@ -91,24 +77,25 @@ export default function Navbar({ onOpenGallery, onOpenAdmin }: NavbarProps) {
             <a href="#contact" className="hover:text-brand-gold transition-colors">Contact</a>
           </nav>
 
-          {/* Right CTAs */}
+          {/* Action CTAs */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => onOpenGallery('ALL')}
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold hover:text-brand-charcoal text-xs font-cinzel tracking-wider uppercase font-bold rounded-sm transition-all duration-300"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 border border-brand-gold/50 rounded-sm text-brand-gold text-xs font-cinzel tracking-wider hover:bg-brand-gold hover:text-brand-charcoal transition-colors uppercase"
             >
               <Images className="w-3.5 h-3.5" /> Full Gallery
             </button>
 
             <a
-              href="https://wa.me/919415362280?text=Hi%20Sandeep%20Ji,%20I'd%20like%20to%20reserve%20dates%20for%20our%20wedding%20coverage"
+              href="https://wa.me/919415362280?text=Hi%20Sandeep%20Ji,%20I%20am%20inquiring%20about%20wedding%20photography%20dates."
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-brand-gold text-brand-charcoal hover:bg-brand-goldHover text-xs font-cinzel tracking-[0.15em] uppercase font-extrabold rounded-sm shadow-xl flex items-center gap-2 transition-transform hover:scale-105"
+              className="flex items-center gap-2 px-5 py-2.5 bg-brand-gold text-brand-charcoal hover:bg-brand-goldHover font-cinzel text-xs tracking-wider uppercase font-bold rounded-sm shadow-lg transition-transform hover:scale-105"
             >
-              <MessageCircle className="w-4 h-4 fill-brand-charcoal" /> VIP BOOK
+              <MessageCircle className="w-3.5 h-3.5 fill-brand-charcoal" /> Book Dates
             </a>
           </div>
+
         </div>
       </header>
     </>

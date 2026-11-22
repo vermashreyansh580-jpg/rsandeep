@@ -8,7 +8,7 @@ export default function BookingForm() {
     name: '',
     phone: '',
     eventType: 'Wedding Muhurtham & Reception',
-    packageTier: 'Diamond Package (Rs 91,000 / Featured)',
+    packageTier: 'Diamond Package (Rs 1,20,000 / Royal Cinema)',
     date: '',
     venue: '',
     notes: '',
@@ -115,10 +115,10 @@ export default function BookingForm() {
                 onChange={(e) => setForm({ ...form, packageTier: e.target.value })}
                 className="w-full bg-brand-charcoal border border-brand-borderDark rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-gold"
               >
-                <option value="Diamond Package (Rs 91,000 / Featured 2 Days)">Diamond Package (Rs 91,000 / Featured 2 Days)</option>
-                <option value="Gold Package (Rs 65,000)">Gold Package (Rs 65,000)</option>
-                <option value="Silver Package (Rs 45,000)">Silver Package (Rs 45,000)</option>
-                <option value="Maternity Shoot (Rs 6,500)">Maternity Shoot (Rs 6,500)</option>
+                <option value="Diamond Package (Rs 1,20,000 / Royal Cinema)">Diamond Package (Rs 1,20,000 / Royal Cinema)</option>
+                <option value="Gold Package (Rs 91,000 / Candid or Cinema)">Gold Package (Rs 91,000 / Candid or Cinema)</option>
+                <option value="Silver Package (Rs 51,000 / Traditional)">Silver Package (Rs 51,000 / Traditional)</option>
+                <option value="Maternity Shoot (Rs 6,500 / Candid, Cinematic & Reels)">Maternity Shoot (Rs 6,500 / Candid, Cinematic & Reels)</option>
                 <option value="Custom Event Proposal">Custom Event Proposal</option>
               </select>
             </div>

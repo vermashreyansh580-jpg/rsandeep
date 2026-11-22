@@ -1,13 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Phone, Instagram, Youtube, MessageCircle, MapPin, Mail } from 'lucide-react';
+import { Phone, Instagram, Youtube, MessageCircle, MapPin, Mail, ShieldCheck } from 'lucide-react';
 
-interface FooterProps {
-  onOpenAdmin: () => void;
-}
-
-export default function Footer({ onOpenAdmin }: FooterProps) {
+export default function Footer() {
   return (
     <footer className="bg-brand-charcoal text-brand-muted py-16 border-t border-brand-borderDark">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -97,12 +93,9 @@ export default function Footer({ onOpenAdmin }: FooterProps) {
           <a href="/sitemap.xml" target="_blank" className="text-brand-gold hover:underline">
             Sitemap
           </a>
-          <button
-            onClick={onOpenAdmin}
-            className="cursor-pointer text-brand-muted hover:text-brand-gold transition-colors"
-          >
-            Admin CMS
-          </button>
+          <span className="text-brand-muted/60 flex items-center gap-1 text-[11px]">
+            <ShieldCheck className="w-3.5 h-3.5 text-brand-gold" /> Certified UP Photo Association
+          </span>
         </div>
       </div>
     </footer>

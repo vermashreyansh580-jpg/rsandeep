@@ -14,7 +14,6 @@ import BookingForm from '@/components/BookingForm';
 import Footer from '@/components/Footer';
 import MasonryModal, { PortfolioItem } from '@/components/MasonryModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
-import AdminModal from '@/components/AdminModal';
 
 const initialPortfolio: PortfolioItem[] = [
   // WEDDINGS & BRIDAL
@@ -54,27 +53,33 @@ export default function Home() {
   const [isMasonryOpen, setIsMasonryOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-  // Load from LocalStorage if client added photos in previous session
+  // Load from LocalStorage (synced with rsandeep-admin)
   useEffect(() => {
     const saved = localStorage.getItem('rsandeep_portfolio');
     if (saved) {
       try {
-        setPortfolioItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPortfolioItems(parsed);
+        }
       } catch (e) {}
     }
 
-    // Keyboard shortcut: Ctrl + Shift + A to open Admin CMS
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        e.preventDefault();
-        setIsAdminOpen(true);
+    // Real-time cross-tab sync when admin panel updates photos
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'rsandeep_portfolio' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setPortfolioItems(parsed);
+          }
+        } catch (err) {}
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   const openMasonry = (cat: string = 'ALL') => {
@@ -97,24 +102,21 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-brand-charcoal text-brand-ivory">
       {/* 1. Header & Navigation */}
-      <Navbar
-        onOpenGallery={openMasonry}
-        onOpenAdmin={() => setIsAdminOpen(true)}
-      />
+      <Navbar onOpenGallery={openMasonry} />
 
-      {/* 2. Hero Section (Grand Split-Hero + Full Sandeep Photo + Prominent Story + 4K Video Loop) */}
+      {/* 2. Hero Section (Grand Split-Hero + Full Sandeep Photo + Prominent Story + 1080p Video Loop) */}
       <Hero onOpenGallery={openMasonry} />
 
       {/* 3. Social Proof & Trust Metrics Bar */}
       <TrustBar />
 
-      {/* 4. Category Gateway Hub (6 Cards that open Masonry Gallery) */}
+      {/* 4. Category Gateway Hub (Dynamic Cards from Admin Sync that open Masonry Gallery) */}
       <CategoryGateway onOpenCategory={openMasonry} />
 
-      {/* 5. 4K Cinema Theater & YouTube Highlights Showcase */}
+      {/* 5. Cinema Theater & YouTube Highlights Showcase */}
       <CinemaTheater />
 
-      {/* 6. 3-Tier Transparent Investment Rate Card */}
+      {/* 6. 3-Tier Transparent Investment Rate Card (Diamond ₹1.2L, Gold ₹91k, Silver ₹51k, Maternity ₹6.5k) */}
       <Pricing />
 
       {/* 7. Wardrobe & Shoot Outfits ("Dress Available" Feature) */}
@@ -130,7 +132,7 @@ export default function Home() {
       <BookingForm />
 
       {/* 11. Dual-Office Luxury Footer */}
-      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+      <Footer />
 
       {/* MODAL 1: Fullscreen Masonry Gallery Modal (Handles Unlimited Photos Cleanly) */}
       <MasonryModal
@@ -156,14 +158,6 @@ export default function Home() {
             setLightboxIndex(lightboxIndex === filteredItems.length - 1 ? 0 : lightboxIndex + 1);
           }
         }}
-      />
-
-      {/* MODAL 3: In-Browser Client Admin CMS (PIN: sandeep2026) */}
-      <AdminModal
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        items={portfolioItems}
-        onUpdateItems={setPortfolioItems}
       />
     </main>
   );
