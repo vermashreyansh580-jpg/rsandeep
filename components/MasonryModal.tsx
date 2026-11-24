@@ -30,14 +30,17 @@ export default function MasonryModal({
 }: MasonryModalProps) {
   if (!isOpen) return null;
 
+  // Derive category pills dynamically so any new category created in Admin Panel appears automatically
+  const availableCategoryIds = Array.from(new Set(items.map((i) => i.category)));
+  const defaultList = ['WEDDINGS', 'BRIDAL', 'MATERNITY', 'PRE-WEDDING', 'DRESSES', 'ENGAGEMENT'];
+  const allCategoryIds = Array.from(new Set([...defaultList, ...availableCategoryIds]));
+
   const categories = [
     { id: 'ALL', label: 'ALL MASTER FRAMES' },
-    { id: 'WEDDINGS', label: 'WEDDINGS' },
-    { id: 'BRIDAL', label: 'BRIDAL EDITORIAL' },
-    { id: 'MATERNITY', label: 'MATERNITY' },
-    { id: 'PRE-WEDDING', label: 'PRE-WEDDING' },
-    { id: 'DRESSES', label: 'DRESSES AVAILABLE' },
-    { id: 'ENGAGEMENT', label: 'ENGAGEMENT' },
+    ...allCategoryIds.map((cid) => ({
+      id: cid,
+      label: cid.replace(/_/g, ' ').toUpperCase(),
+    })),
   ];
 
   const filteredItems = activeCategory === 'ALL'

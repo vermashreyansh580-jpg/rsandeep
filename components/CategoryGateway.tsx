@@ -68,19 +68,24 @@ export const defaultCategories: CategoryItem[] = [
 ];
 
 interface CategoryGatewayProps {
+  categories?: CategoryItem[];
   onOpenCategory: (category: string) => void;
 }
 
-export default function CategoryGateway({ onOpenCategory }: CategoryGatewayProps) {
-  const [categories, setCategories] = useState<CategoryItem[]>(defaultCategories);
+export default function CategoryGateway({ categories: propCategories, onOpenCategory }: CategoryGatewayProps) {
+  const [categories, setCategories] = useState<CategoryItem[]>(propCategories || defaultCategories);
 
-  // Subscribe to Cloud Firestore & local sync
+  // Subscribe to Cloud Firestore & local sync if not provided as props
   useEffect(() => {
+    if (propCategories && propCategories.length > 0) {
+      setCategories(propCategories);
+      return;
+    }
     const unsubscribe = subscribeToCategories(defaultCategories, setCategories);
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
-  }, []);
+  }, [propCategories]);
 
   return (
     <section id="gallery" className="py-24 bg-brand-charcoal border-b border-brand-borderDark relative">

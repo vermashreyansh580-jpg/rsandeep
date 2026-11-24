@@ -95,8 +95,20 @@ export function subscribeToPhotos(
               const data = doc.data() as PortfolioItem;
               list.push({ ...data, id: doc.id });
             });
+
+            // Sort so newly uploaded photos (PHOTO_timestamp_...) appear at the top
+            list.sort((a, b) => {
+              const timeA = a.id.startsWith('PHOTO_') ? parseInt(a.id.split('_')[1]) || 0 : 0;
+              const timeB = b.id.startsWith('PHOTO_') ? parseInt(b.id.split('_')[1]) || 0 : 0;
+              return timeB - timeA;
+            });
+
             onUpdate(list);
-            localStorage.setItem('rsandeep_portfolio', JSON.stringify(list));
+            try {
+              localStorage.setItem('rsandeep_portfolio', JSON.stringify(list));
+            } catch (storageErr) {
+              // Ignore localStorage quota errors if large base64 photos exist
+            }
           } else {
             loadPhotosFromLocalOrFallback(fallback, onUpdate);
           }

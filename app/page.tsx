@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import TrustBar from '@/components/TrustBar';
-import CategoryGateway from '@/components/CategoryGateway';
+import CategoryGateway, { CategoryItem, defaultCategories } from '@/components/CategoryGateway';
+import LiveGallery from '@/components/LiveGallery';
 import CinemaTheater from '@/components/CinemaTheater';
 import Pricing from '@/components/Pricing';
 import Wardrobe from '@/components/Wardrobe';
@@ -14,7 +15,7 @@ import BookingForm from '@/components/BookingForm';
 import Footer from '@/components/Footer';
 import MasonryModal, { PortfolioItem } from '@/components/MasonryModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
-import { subscribeToPhotos } from '@/lib/catalogService';
+import { subscribeToPhotos, subscribeToCategories } from '@/lib/catalogService';
 
 const initialPortfolio: PortfolioItem[] = [
   // WEDDINGS & BRIDAL
@@ -50,16 +51,20 @@ const initialPortfolio: PortfolioItem[] = [
 ];
 
 export default function Home() {
+  const [categories, setCategories] = useState<CategoryItem[]>(defaultCategories);
   const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(initialPortfolio);
   const [isMasonryOpen, setIsMasonryOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Subscribe to Cloud Firestore & real-time sync
+  // Subscribe to Cloud Firestore & real-time sync for both Categories & Photos
   useEffect(() => {
-    const unsubscribe = subscribeToPhotos(initialPortfolio, setPortfolioItems);
+    const unsubCategories = subscribeToCategories(defaultCategories, setCategories);
+    const unsubPhotos = subscribeToPhotos(initialPortfolio, setPortfolioItems);
+
     return () => {
-      if (typeof unsubscribe === 'function') unsubscribe();
+      if (typeof unsubCategories === 'function') unsubCategories();
+      if (typeof unsubPhotos === 'function') unsubPhotos();
     };
   }, []);
 
@@ -92,7 +97,15 @@ export default function Home() {
       <TrustBar />
 
       {/* 4. Category Gateway Hub (Dynamic Cards from Cloud Firestore) */}
-      <CategoryGateway onOpenCategory={openMasonry} />
+      <CategoryGateway categories={categories} onOpenCategory={openMasonry} />
+
+      {/* 4.5. Real-Time Master Gallery (Directly visible on homepage, live Firestore sync) */}
+      <LiveGallery
+        items={portfolioItems}
+        categories={categories}
+        onOpenPhoto={handleOpenPhoto}
+        onOpenFullscreenArchive={openMasonry}
+      />
 
       {/* 5. Cinema Theater & YouTube Highlights Showcase */}
       <CinemaTheater />
